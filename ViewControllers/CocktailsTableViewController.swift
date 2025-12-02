@@ -13,13 +13,28 @@ final class CocktailsTableViewController: UITableViewController {
     private let networkManager = NetworkManager.shared
     private var alcoCocktails: [Cocktail] = []
     
+    // MARK: - Lifecycle methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.rowHeight = 80
+        tableView.rowHeight = 140
         fetchAlcoCocktails()
     }
     
-   
+    // MARK: - Segues
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "showDetails",
+           let cell = sender as? UITableViewCell,
+           let indexPath = tableView.indexPath(for: cell),
+           let detailVC = segue.destination as? CocktailDetailsViewController {
+            let cocktail = alcoCocktails[indexPath.row]
+            detailVC.cocktailID = cocktail.idDrink
+        }
+    }
+}
+
+extension CocktailsTableViewController {
+    
+    // MARK: - TableViewProtocol
     override func numberOfSections(in tableView: UITableView) -> Int {
         1
     }
@@ -39,28 +54,25 @@ final class CocktailsTableViewController: UITableViewController {
         let cocktail = alcoCocktails[indexPath.row]
         
         content.text = cocktail.strDrink
-//        content.imageProperties.cornerRadius = 10
         cell.contentConfiguration = content
         
         networkManager
-            .loadImage(from: URL(string: cocktail.strDrinkThumb)!) { data in
+            .loadImage(from: cocktail.strDrinkThumb) { data in
                 guard let data, let image = UIImage(data: data) else { return }
                 DispatchQueue.main.async {
                     var updated = cell.defaultContentConfiguration()
                     updated.text = cocktail.strDrink
+                    updated.textProperties.font = UIFont(name: "AvenirNext-DemiBold", size: 22)!
                     updated.image = image
+                    updated.imageProperties.cornerRadius = 10
                     cell.contentConfiguration = updated
-
                 }
         }
         
-        
         return cell
     }
-}
-
-// MARK: - URL Requests
-extension CocktailsTableViewController {
+    
+    // MARK: - URL Requests
     private func fetchAlcoCocktails() {
         networkManager
             .fetchData(
@@ -75,6 +87,6 @@ extension CocktailsTableViewController {
                     }
                 }
     }
-    
-    
+
+
 }
