@@ -47,27 +47,28 @@ extension CocktailsTableViewController {
         let cell = tableView.dequeueReusableCell(
             withIdentifier: "CocktailCell",
             for: indexPath
-        )
+        ) as! CocktailsTableViewCell
         
-        var content = cell.defaultContentConfiguration()
-        
+//        var content = cell.defaultContentConfiguration()
+//
         let cocktail = alcoCocktails[indexPath.row]
-        
-        content.text = cocktail.strDrink
-        cell.contentConfiguration = content
-        
-        networkManager
-            .loadImage(from: cocktail.strDrinkThumb) { data in
-                guard let data, let image = UIImage(data: data) else { return }
-                DispatchQueue.main.async {
-                    var updated = cell.defaultContentConfiguration()
-                    updated.text = cocktail.strDrink
-                    updated.textProperties.font = UIFont(name: "AvenirNext-DemiBold", size: 22)!
-                    updated.image = image
-                    updated.imageProperties.cornerRadius = 10
-                    cell.contentConfiguration = updated
-                }
-        }
+//        content.text = cocktail.strDrink
+//        cell.contentConfiguration = content
+
+        cell.configure(with: cocktail)
+
+//        networkManager
+//            .loadImage(from: cocktail.strDrinkThumb) { data in
+//                guard let data, let image = UIImage(data: data) else { return }
+//                DispatchQueue.main.async {
+//                    var updated = cell.defaultContentConfiguration()
+//                    updated.text = cocktail.strDrink
+//                    updated.textProperties.font = UIFont(name: "AvenirNext-DemiBold", size: 22)!
+//                    updated.image = image
+//                    updated.imageProperties.cornerRadius = 10
+//                    cell.contentConfiguration = updated
+//                }
+//        }
         
         return cell
     }

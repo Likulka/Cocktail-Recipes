@@ -10,12 +10,18 @@ import UIKit
 final class CocktailDetailsViewController: UIViewController {
     
     // MARK: - IBOutlets
-    @IBOutlet var cocktailImage: UIImageView!
-    @IBOutlet var tableView: UITableView!
-    @IBOutlet var glass: UILabel!
+    @IBOutlet var cocktailName: UILabel!
     @IBOutlet var alcoLabel: UILabel!
+    @IBOutlet var glass: UILabel!
+    @IBOutlet var cocktailImage: UIImageView!
+    
+    @IBOutlet var cardView: UIView!
+    
+    @IBOutlet var tableView: UITableView!
+   
     @IBOutlet var preparationInstructions: UILabel!
     
+    @IBOutlet weak var imageActivityIndicator: UIActivityIndicatorView!
     // MARK: - Private properties
     private var cocktail: CocktailDetail!
     private var ingredients: [Ingredient]!
@@ -26,7 +32,10 @@ final class CocktailDetailsViewController: UIViewController {
     // MARK: - Lifecycle methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        setStartLayout()
+        imageActivityIndicator.startAnimating()
+        imageActivityIndicator.hidesWhenStopped = true
+
         fetchCocktail()
         
         tableView.dataSource = self
@@ -75,9 +84,9 @@ extension CocktailDetailsViewController {
                     self?.ingredients = detail.ingredientsPairs
                     self?.tableView.reloadData()
                     DispatchQueue.main.async() {
-                        self?.title = detail.strDrink
-                        self?.alcoLabel.text = detail.strAlcoholic
-                        self?.glass.text = detail.strGlass
+                        self?.cocktailName.text = detail.strDrink
+                        self?.alcoLabel.text = "Alcohol: \(detail.strAlcoholic)"
+                        self?.glass.text = "Glass: \(detail.strGlass)"
                         self?.preparationInstructions.text = detail.strInstructions
                         self?.tableView.reloadData()
                     }
@@ -88,6 +97,7 @@ extension CocktailDetailsViewController {
                             
                             DispatchQueue.main.sync {
                                 self?.cocktailImage.image = image
+                                self?.imageActivityIndicator.stopAnimating()
                                 self?.tableView.reloadData()
                             }
                         })
@@ -96,5 +106,18 @@ extension CocktailDetailsViewController {
                     print(error)
                 }
             }
+    }
+    
+    // MARK: - layout
+    private func setStartLayout() {
+        cardView.layer.cornerRadius = 16
+        cardView.layer.shadowColor = UIColor.black.cgColor
+        cardView.layer.shadowOffset = CGSize(width: 0, height: 4)
+        cardView.layer.shadowOpacity = 0.1
+        cardView.layer.shadowRadius = 10
+                
+        cocktailImage.layer.cornerRadius = 16
+        
+        tableView.layer.cornerRadius = 16
     }
 }
